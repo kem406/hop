@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import ehtim as eh
-import obd.obd as ob
+import main.obd.obd as ob
 from inspect import getmembers, isfunction
 
 epsilon = 1.0e-3
@@ -159,5 +159,3 @@ print('---------------------------------------------')
 print('The following functions have not been tested:')
 for f in functions_list:
     print('obd.'+f[0])
-
-
