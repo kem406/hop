@@ -1,11 +1,11 @@
 ## imports
 import numpy as np
-import main.obd.obd as obd
+import main.obd.obd as ob
 import imageio
 import matplotlib.pyplot as plt
 
 ## parameters
-sf = [50, 50]        # size of the PSF
+sf = np.array([50, 50])       # size of the PSF
 maxiter = [50, 1]    # number of iterations for f and x
 n = 40              # number of images
 clipping = np.inf      # maximally acceptable pixel (for saturation correction)
@@ -32,4 +32,10 @@ for i in range(1,n+1):
   ##### THE MAIN WORK HORSE #####
   x, f = ob.obd(x, y, sf, maxiter, clipping, srf)
 
-print('Done! The result is in variable "x"');
+print('Done! The result is in variable "x"')
+
+type(sf[0])
+
+sf
+
+y.shape

@@ -1,5 +1,5 @@
 % Script for
-% Online Blind Deconvolution (OBD) 
+% Online Blind Deconvolution (OBD)
 % Version 0.0, 10-Sep-2010
 %
 %    x     - true underlying image
@@ -22,7 +22,7 @@ imagepath = 'data/epsilon_lyrae';
 y_fname = @(i) fullfile(imagepath, sprintf('%08d.png', i));
 
 % intially there is no x
-x = [];
+x = []
 
 % iterate over all images
 for i = 1:n
@@ -38,7 +38,7 @@ for i = 1:n
   if 1
     % show intermediate output
     clf
-    subplot(131), imagesc(y), title(sprintf('observed image y%d', i)); axis equal, axis tight 
+    subplot(131), imagesc(y), title(sprintf('observed image y%d', i)); axis equal, axis tight
     if exist('f', 'var')
       subplot(132), imagesc(f), title(sprintf('estimated PSF f%d', i)); axis equal, axis tight
     end
