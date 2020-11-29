@@ -1,6 +1,6 @@
 ## imports
 import numpy as np
-import main.obd.obd as ob
+import main.obd.obd as obd
 import imageio
 import matplotlib.pyplot as plt
 
