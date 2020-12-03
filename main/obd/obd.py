@@ -58,6 +58,11 @@ def obd_update(f,x,y,maxiter,clipping,srf): #this is where gradient descent happ
     denom = setZero(cnv2tp(x, ytmp, srf))
     tol = 1e-10
     factor = np.multiply((num+tol), (denom+tol))
+    print(num.shape)
+    print(tol)
+    print(denom.shape)
+    print(factor.shape)
+    print(sf.shape)
     factor = np.reshape(factor, sf)
     f = np.multiply(f, factor)
   return f
