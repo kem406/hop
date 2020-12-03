@@ -127,6 +127,41 @@ def cnv2(x,f,sy):
     # return the computed y image
     return y
 
+# function that performs 2D convolution via FFTs and returns the image
+def cnv2_temp(x,f,sy):
+
+    # get the dimensions of x and f
+    sx = x.shape
+    sf = f.shape
+
+    # if the x image is larger than the PSF, bump up the size of the PSF so that they match
+    if np.all(np.greater_equal(sx,sf)):
+
+        # use real FFTs to avoid returning complex values
+        y = np.fft.irfft2(np.multiply(np.fft.rfft2(x), np.fft.rfft2(f, s=(sx[0], sx[1]))))
+
+        # slice out the appropriate piece of the x image to make the y image
+        y = cnv2slice(y, slice(sf[0], sx[0]), slice(sf[1], sx[1]))
+
+    # if the PSF is larger than the x image, swap their roles
+    elif np.all(np.greater_equal(sf,sx)):
+        y = cnv2(f,x,sy)
+
+    # if neither is larger than the other, either the image is not square or math has broken
+    else:
+        raise Exception('[cnv2] x must be at least as large as f or vice versa. Make sure the images are square.')
+
+    # check that the returned y image matches the expected dimensions
+    if np.any(np.greater(sy,y.shape)):
+        raise Exception('[cnv2] size missmatch between input and computed y.')
+
+    # if the expected y image dimensions are smaller than the computed one's, downsample it
+    if np.any(np.less(sy,y.shape)):
+        y = samp2(y,sy)
+
+    # return the computed y image
+    return y
+
 def cnv2tp(x, y, srf):
     sx = np.array(x.shape)
     sy = np.array(y.shape)
