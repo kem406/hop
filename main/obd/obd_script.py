@@ -22,7 +22,7 @@ test = imageio.imread(y_fname(10))
 # intially there is no x
 x = []
 
-for i in range(1,n+1):
+for i in range(1,2):
   # load the next observed image
   fname = y_fname(i)
   print('Processing {}'.format(fname))
@@ -33,6 +33,38 @@ for i in range(1,n+1):
   x, f = ob.obd(x, y, sf, maxiter, clipping, srf)
 
 print('Done! The result is in variable "x"')
+
+np.count_nonzero(f)
+
+plt.imshow(y)
+
+plt.imshow(f)
+
+temp = ob.cnv2tp(f, y, srf)
+
+plt.imshow(ob.setZero(temp))
+
+plt.imshow(x)
+
+
+f = np.linalg.norm(np.ndarray.flatten(y)) / np.linalg.norm(np.ndarray.flatten(x))
+f
+x.shape
+y.shape
+np.ndarray.flatten(y)
+np.ndarray.flatten(x)
+
+f = np.linalg.norm(np.ndarray.flatten(y)) / np.linalg.norm(np.ndarray.flatten(x))
+f = f * np.ones(sf) / np.sqrt(np.prod(sf, axis=0))
+
+plt.imshow(f)
+
+f1 = ob.obd_update(f, x, y, maxiter[0], clipping, srf)
+
+plt.imshow(f1)
+
+np.count_nonzero(f1)
+
 
 type(sf[0])
 
