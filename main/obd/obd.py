@@ -1,4 +1,5 @@
 import numpy as np
+import pdb
 
 def obd(x, y, sf, maxiter, clipping=np.inf, srf=1):
 
@@ -60,7 +61,7 @@ def obd_update(f,x,y,maxiter,clipping,srf): #this is where gradient descent happ
     factor = np.divide((num+tol), (denom+tol))
     factor = np.reshape(factor, sf)
     f = np.multiply(f, factor)
-  return f, num, denom, factor, ytmp
+  return f #, num, denom, factor, ytmp
 
 # function that converts all negative elements to zero
 def setZero(x):
@@ -123,11 +124,16 @@ def cnv2tp(x, y, srf):
     if (srf > 1):
         samp2(y, np.floor(srf*sy))
     if np.all(np.greater_equal(sx, sy)):
-        sf = sx - sy + 1
-        f = np.fft.ifft2(np.multiply(np.fft.fft2(x, s=sf), np.fft.fft2(cnv2pad(y, sf),s=sf)))
-        f = cnv2slice(f, slice(0, sf[0]), slice(0, sf[1]))
+        sf = sx - sy
+        f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))),
+         np.fft.fft2(y)))
+        #f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
+        #pdb.set_trace()
+        #f = cnv2slice(np.real(f), slice(int(sy[0]/2-sf[0]/2), int(sy[0]/2+sf[0]/2)), slice(int(sy[1]/2-sf[1]/2), int(sy[1]/2+sf[1]/2)))
+        f = cnv2slice(np.real(f), slice(0, sf[0]), slice(0, sf[1]))
+        #pdb.set_trace()
     elif np.all(np.less_equal(sx, sy)):
-        sf = sy + sx - 1
+        sf = sy + sx
         f = np.multiply(np.conj(np.fft.fft2(x,s=sf)), np.fft.fft2(cnv2pad(y, sx),s=sf))
         f = np.fft.ifft2(f)
     else:

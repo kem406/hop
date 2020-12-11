@@ -4,6 +4,8 @@ import main.obd.obd as ob
 import imageio
 import matplotlib.pyplot as plt
 
+import pdb
+
 ## parameters
 sf = np.array([50, 50])       # size of the PSF
 maxiter = [50, 1]    # number of iterations for f and x
@@ -22,7 +24,7 @@ test = imageio.imread(y_fname(10))
 # intially there is no x
 x = np.array([])
 
-for i in range(1,2):
+for i in range(1,5):
   # load the next observed image
   fname = y_fname(i)
   print('Processing {}'.format(fname))
@@ -32,12 +34,24 @@ for i in range(1,2):
   ##### THE MAIN WORK HORSE #####
   x, f = ob.obd(x, y, sf, maxiter, clipping, srf)
 
+  fig, ax = plt.subplots(1,3, figsize=(24., 8.))
+  ax[0].imshow(y, origin='lower')
+  ax[1].imshow(f, origin='lower')
+  ax[2].imshow(x, origin='lower')
+  plt.show()
+
+1+1
 plt.imshow(x)
+
+x.shape
+
+plt.imshow(y)
+
+y.shape
 
 plt.imshow(f)
-
-
-plt.imshow(x)
+f.shape
+f
 
 print('Done! The result is in variable "x"')
 
@@ -130,3 +144,56 @@ f = ob.obd_update(f, x, y, maxiter[0], clipping, srf)
 plt.imshow(f)
 
 f
+
+sx = np.array(x.shape)
+sy = np.array(y.shape)
+sf = sx - sy
+sf
+
+test1 = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(ob.cnv2pad(y, sf))))
+test2 = ob.cnv2slice(test1, slice(0, sf[0]), slice(0, sf[1]))
+plt.imshow(np.abs(test1))
+
+plt.imshow(np.real(test2))
+
+test2.shape
+
+np.count_nonzero(test1)
+
+np.shape(np.fft.fft2(x, s=sf))
+
+np.shape(np.fft.fft2(x))
+
+np.shape(np.fft.fft2(ob.cnv2pad(y, sf)))
+
+
+f3 = ob.obd_update(f, x, y, maxiter[0], clipping, srf)
+
+plt.imshow(f3[0])
+
+plt.imshow(f3[1])
+
+plt.imshow(f3[2])
+
+plt.imshow(f3[3])
+
+plt.imshow(np.real(f3[4]))
+
+f3
+np.count_nonzero(f3[2])
+
+
+test1 = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(ob.cnv2pad(y, sf))))
+test2 = ob.cnv2slice(test1, slice(0, sf[0]), slice(0, sf[1]))
+
+plt.imshow(np.real(test2))
+
+f = np.fft.ifft2(np.multiply(np.fft.fft2(x, s=sf), np.fft.fft2(ob.cnv2pad(y, sf),s=sf)))
+
+plt.imshow(x)
+
+plt.imshow(np.real(f))
+
+f = cnv2slice(np.real(f), slice(0, sf[0]), slice(0, sf[1]))
+
+ob.cnv2tp(x, y, srf)
