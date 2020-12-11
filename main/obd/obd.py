@@ -3,7 +3,7 @@ import numpy as np
 def obd(x, y, sf, maxiter, clipping=np.inf, srf=1):
 
   # find dimensions of y
-  sy = len(y)
+  sy = np.array(np.shape(y))
 
   # multiply sy and sf by srf and round down to nearest integer if srf above 1
   if (srf > 1):
@@ -14,8 +14,8 @@ def obd(x, y, sf, maxiter, clipping=np.inf, srf=1):
   elif (srf < 1):
     raise Exception('superresolution factor must be one or larger')
 
-  sx = len(x)
-  if sx != 0:
+  sx = np.array(np.shape(x))
+  if sx[0] != 0:
     # check sizes
     if any(sf != sx - sy + 1):
       Exception('size mismatch')
@@ -29,7 +29,7 @@ def obd(x, y, sf, maxiter, clipping=np.inf, srf=1):
     sumf = np.sum(f)
     f = f/sumf # normalize f
     x = sumf*x # adjust x as well
-    sx = len(x);
+    sx = np.array(np.shape(x))
 
   else:
     f = np.zeros(sf)
@@ -57,15 +57,10 @@ def obd_update(f,x,y,maxiter,clipping,srf): #this is where gradient descent happ
     num = setZero(cnv2tp(x, y, srf))
     denom = setZero(cnv2tp(x, ytmp, srf))
     tol = 1e-10
-    factor = np.multiply((num+tol), (denom+tol))
-    print(num.shape)
-    print(tol)
-    print(denom.shape)
-    print(factor.shape)
-    print(sf.shape)
+    factor = np.divide((num+tol), (denom+tol))
     factor = np.reshape(factor, sf)
     f = np.multiply(f, factor)
-  return f
+  return f, num, denom, factor, ytmp
 
 # function that converts all negative elements to zero
 def setZero(x):
@@ -101,10 +96,8 @@ def cnv2(x,f,sy):
 
         # use real FFTs to avoid returning complex values
         y = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(f, s=[sx[0], sx[1]])))
-        print('first y {}'.format(y.shape))
         # slice out the appropriate piece of the x image to make the y image
         y = cnv2slice(y, slice(sf[0]-1, sx[0]), slice(sf[1]-1, sx[1]))
-        print('second y {}'.format(y.shape))
     # if the PSF is larger than the x image, swap their roles
     elif np.all(np.greater_equal(sf,sx)):
         y = cnv2(f,x,sy)
@@ -115,9 +108,6 @@ def cnv2(x,f,sy):
 
     # check that the returned y image matches the expected dimensions
     if np.any(np.greater(sy,y.shape)):
-        print('third y {}'.format(y.shape))
-        print('sy {}'.format(sy))
-        print('sx {}'.format(sx))
         raise Exception('[cnv2] size missmatch between input and computed y.')
 
     # if the expected y image dimensions are smaller than the computed one's, downsample it

@@ -20,7 +20,7 @@ def y_fname(i):
 test = imageio.imread(y_fname(10))
 
 # intially there is no x
-x = []
+x = np.array([])
 
 for i in range(1,2):
   # load the next observed image
@@ -31,6 +31,13 @@ for i in range(1,2):
 
   ##### THE MAIN WORK HORSE #####
   x, f = ob.obd(x, y, sf, maxiter, clipping, srf)
+
+plt.imshow(x)
+
+plt.imshow(f)
+
+
+plt.imshow(x)
 
 print('Done! The result is in variable "x"')
 
@@ -59,11 +66,32 @@ f = f * np.ones(sf) / np.sqrt(np.prod(sf, axis=0))
 
 plt.imshow(f)
 
-f1 = ob.obd_update(f, x, y, maxiter[0], clipping, srf)
+f
 
-plt.imshow(f1)
+f1 = ob.obd_update(f, x, y, 2, clipping, srf)
 
-np.count_nonzero(f1)
+f1
+
+plt.imshow(f1[0])
+
+plt.imshow(f1[1])
+
+np.count_nonzero(f1[1])
+
+plt.imshow(f1[2])
+
+np.count_nonzero(f1[2])
+
+np.count_nonzero(f1[3])
+
+f1[3]
+
+plt.imshow(np.real(f1[4]))
+
+x.shape
+y.shape
+
+ob.cnv2tp(x, y, srf)
 
 
 type(sf[0])
@@ -71,3 +99,34 @@ type(sf[0])
 sf
 
 y.shape
+
+y
+10*y
+
+sy
+len(x)
+sy
+np.shape(np.array([]))
+np.shape(x)
+
+np.shape(np.array([])) == (0,)
+
+y
+
+(1,3)-(2,4)
+np.array(np.shape(x))-np.array(np.shape(y))
+
+A = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3]])
+A
+B = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3]])
+
+np.divide(A,B)
+
+np.array(np.shape(np.array([])))[0]
+
+
+f = ob.obd_update(f, x, y, maxiter[0], clipping, srf)
+
+plt.imshow(f)
+
+f
