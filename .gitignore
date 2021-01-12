@@ -1,1 +1,8 @@
 main/obd/__pycache__
+
+# Data that is large
+transit_mocks/data/*
+TurbulentPSFMocks/data/*
+
+# Dropbox
+*.DS_Store
