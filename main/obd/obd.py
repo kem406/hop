@@ -125,9 +125,8 @@ def cnv2tp(x, y, srf):
         samp2(y, np.floor(srf*sy))
     if np.all(np.greater_equal(sx, sy)):
         sf = sx - sy
-        f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))),
-         np.fft.fft2(y)))
-        #f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
+        #f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))), np.fft.fft2(y)))
+        f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
         #pdb.set_trace()
         #f = cnv2slice(np.real(f), slice(int(sy[0]/2-sf[0]/2), int(sy[0]/2+sf[0]/2)), slice(int(sy[1]/2-sf[1]/2), int(sy[1]/2+sf[1]/2)))
         f = cnv2slice(np.real(f), slice(0, sf[0]), slice(0, sf[1]))
