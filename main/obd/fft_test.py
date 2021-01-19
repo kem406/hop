@@ -20,3 +20,7 @@ A = makeGaussian(50, 7, center=(25,25))
 fig, ax = plt.subplots(1,3, figsize=(24., 8.))
 ax[0].imshow(A, origin='lower')
 plt.show()
+hf = h5py.File('data.h5', 'w')
+hf.create_dataset('gaussian1', data=A)
+hf.close
+asdasd

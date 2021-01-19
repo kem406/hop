@@ -1,3 +1,0 @@
-f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
-
-# f = inverse fast fourier transform of (multiply fft of x and fft of (cnv2pad of y and sf))
