@@ -1,5 +1,6 @@
 import numpy as np
 import h5py
+from PIL import Image
 import matplotlib.pyplot as plt
 #f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
 
@@ -20,7 +21,5 @@ A = makeGaussian(50, 7, center=(25,25))
 fig, ax = plt.subplots(1,3, figsize=(24., 8.))
 ax[0].imshow(A, origin='lower')
 plt.show()
-hf = h5py.File('data.h5', 'w')
-hf.create_dataset('gaussian1', data=A)
-hf.close
-asdasd
+with h5py.File('main/obd/gaussian.hdf5', 'w') as hdf:
+    hdf.create_dataset('dataset1', data=A)
