@@ -1,5 +1,6 @@
 import numpy as np
 import pdb
+import matplotlib.pyplot as plt
 
 def obd(x, y, sf, maxiter, clipping=np.inf, srf=1):
 
@@ -130,6 +131,9 @@ def cnv2tp(x, y, srf):
         print(y.shape)
         print((np.fft.fft2(cnv2pad(y, sf))).shape)
         print((np.fft.fft2(x)).shape)
+        fig, ax = plt.subplots(1,2, figsize=(24., 8.))
+        ax[0].imshow(x, origin='lower')
+        plt.show()
         f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
         #pdb.set_trace()
         #f = cnv2slice(np.real(f), slice(int(sy[0]/2-sf[0]/2), int(sy[0]/2+sf[0]/2)), slice(int(sy[1]/2-sf[1]/2), int(sy[1]/2+sf[1]/2)))
