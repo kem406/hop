@@ -37,7 +37,7 @@ x=cnv2pad(x, sf)
 
 fft1=np.fft.fft2(x)
 fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-ax[0].imshow(abs(fft1), origin='lower')
+ax[0].imshow(abs(np.fft.fftshift(fft1)), origin='lower')
 plt.show()
 
 pad1=cnv2pad(y, sf)
@@ -47,7 +47,7 @@ plt.show()
 
 fft2=np.fft.fft2(cnv2pad(y, sf))
 fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-ax[0].imshow(abs(fft2), origin='lower')
+ax[0].imshow(abs(np.fft.fftshift(fft2)), origin='lower')
 plt.show()
 
 mult1=np.multiply(fft1, fft2)
