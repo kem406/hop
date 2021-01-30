@@ -133,29 +133,29 @@ if all(sx >= sy)
   sf = sx - sy + 1;
   placeholder=0
   fft_x=conj(fft2(x));
-  clf
-  subplot(131), imagesc(abs(fftshift(fft_x))), title(sprintf('fft_x')); axis equal, axis tight
-  drawnow
+  %clf
+  %subplot(131), imagesc(abs(fftshift(fft_x))), title(sprintf('fft_x')); axis equal, axis tight
+  %drawnow
   pad_y=cnv2pad(y, sf);
-  clf
-  subplot(131), imagesc(pad_y), title(sprintf('pad_y')); axis equal, axis tight
-  drawnow  
+  %clf
+  %subplot(131), imagesc(pad_y), title(sprintf('pad_y')); axis equal, axis tight
+  %drawnow  
   fft_y=fft2(pad_y);
-  clf
-  subplot(131), imagesc(abs(fftshift(fft_y))), title(sprintf('fft_y')); axis equal, axis tight
-  drawnow  
+  %clf
+  %subplot(131), imagesc(abs(fftshift(fft_y))), title(sprintf('fft_y')); axis equal, axis tight
+  %drawnow  
   mult1=fft_x.*fft_y;
-  clf
-  subplot(131), imagesc(abs(fftshift(mult1))), title(sprintf('mult1')); axis equal, axis tight
-  drawnow
+  %clf
+  %subplot(131), imagesc(abs(fftshift(mult1))), title(sprintf('mult1')); axis equal, axis tight
+  %drawnow
   ifft_xy=ifft2(mult1);
-  clf
-  subplot(131), imagesc(ifft_xy), title(sprintf('ifft_xy')); axis equal, axis tight
-  drawnow
+  %clf
+  %subplot(131), imagesc(ifft_xy), title(sprintf('ifft_xy')); axis equal, axis tight
+  %drawnow
   f=cnv2slice(ifft_xy, 1:sf(1), 1:sf(2));
-  clf
-  subplot(131), imagesc(f), title(sprintf('f')); axis equal, axis tight
-  drawnow
+  %clf
+  %subplot(131), imagesc(f), title(sprintf('f')); axis equal, axis tight
+  %drawnow
   placeholder=1
   
   %f = cnv2slice(ifft2(conj(fft2(x)).*fft2(cnv2pad(y, sf))), 1:sf(1), 1:sf(2));

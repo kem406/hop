@@ -126,6 +126,12 @@ def cnv2tp(x, y, srf):
         samp2(y, np.floor(srf*sy))
     if np.all(np.greater_equal(sx, sy)):
         sf = sx - sy
+        debug1=0
+        debug2=0
+        debug3=0
+        debug4=0
+        debug5=0
+        debug6=0
         #f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))), np.fft.fft2(y)))
         #print(x.shape)
         #print(y.shape)
@@ -135,46 +141,53 @@ def cnv2tp(x, y, srf):
         #ax[0].imshow(x, origin='lower')
         #plt.show()
         fft_x=np.fft.fft2(x)
-        print("fft_x:")
-        fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-        ax[0].imshow(abs(np.fft.fftshift(fft_x)), origin='lower')
-        plt.show()
+        if debug1:
+            print("fft_x:")
+            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
+            ax[0].imshow(abs(np.fft.fftshift(fft_x)), origin='lower')
+            plt.show()
+
         #breakpoint()
 
         pad_y=cnv2pad(y, sf)
-        print("pad_y:")
-        fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-        ax[0].imshow(pad_y, origin='lower')
-        plt.show()
+        if debug2:
+            print("pad_y:")
+            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
+            ax[0].imshow(pad_y, origin='lower')
+            plt.show()
         #breakpoint()
 
         fft_y=np.fft.fft2(pad_y)
-        print("fft_y:")
-        fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-        ax[0].imshow(abs(np.fft.fftshift(fft_y)), origin='lower')
-        plt.show()
+        if debug3:
+            print("fft_y:")
+            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
+            ax[0].imshow(abs(np.fft.fftshift(fft_y)), origin='lower')
+            plt.show()
         #breakpoint()
 
         mult1=np.multiply(fft_x, fft_y)
-        print("mult1:")
-        fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-        ax[0].imshow(abs(np.fft.fftshift(mult1)), origin='lower')
-        plt.show()
+        if debug4:
+            print("mult1:")
+            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
+            ax[0].imshow(abs(np.fft.fftshift(mult1)), origin='lower')
+            plt.show()
         #breakpoint()
 
         ifft_xy=np.fft.ifft2(mult1)
-        print("ifft_xy:")
-        fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-        ax[0].imshow(abs(ifft_xy), origin='lower')
-        plt.show()
+        if debug5:
+            print("ifft_xy:")
+            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
+            ax[0].imshow(abs(ifft_xy), origin='lower')
+            plt.show()
         #f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
         #pdb.set_trace()
         #f = cnv2slice(np.real(f), slice(int(sy[0]/2-sf[0]/2), int(sy[0]/2+sf[0]/2)), slice(int(sy[1]/2-sf[1]/2), int(sy[1]/2+sf[1]/2)))
-        f = cnv2slice(np.real(ifft_xy), slice(0, sf[0]), slice(0, sf[1]))
-        print("f:")
-        fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-        ax[0].imshow(f, origin='lower')
-        plt.show()
+        f = cnv2slice(np.real(ifft_xy), slice(0+25, sf[0]+25), slice(0+11, sf[1]+11))
+        if debug6:
+            print("f:")
+            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
+            ax[0].imshow(f, origin='lower')
+            plt.show()
         #pdb.set_trace()
     elif np.all(np.less_equal(sx, sy)):
         sf = sy + sx
