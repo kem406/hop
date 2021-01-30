@@ -158,7 +158,7 @@ def cnv2tp(x, y, srf):
         mult1=np.multiply(fft_x, fft_y)
         print("mult1:")
         fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-        ax[0].imshow(abs(mult1), origin='lower')
+        ax[0].imshow(abs(np.fft.fftshift(mult1)), origin='lower')
         plt.show()
         #breakpoint()
 

@@ -146,7 +146,7 @@ if all(sx >= sy)
   drawnow  
   mult1=fft_x.*fft_y;
   clf
-  subplot(131), imagesc(abs(mult1)), title(sprintf('mult1')); axis equal, axis tight
+  subplot(131), imagesc(abs(fftshift(mult1))), title(sprintf('mult1')); axis equal, axis tight
   drawnow
   ifft_xy=ifft2(mult1);
   clf
