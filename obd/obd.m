@@ -131,7 +131,7 @@ sy = size(y);
 % perform the linear convolution in Fourier space
 if all(sx >= sy)
   sf = sx - sy + 1;
-  
+  placeholder=0
   fft_x=conj(fft2(x));
   clf
   subplot(131), imagesc(abs(fftshift(fft_x))), title(sprintf('fft_x')); axis equal, axis tight
@@ -156,6 +156,8 @@ if all(sx >= sy)
   clf
   subplot(131), imagesc(f), title(sprintf('f')); axis equal, axis tight
   drawnow
+  placeholder=1
+  
   %f = cnv2slice(ifft2(conj(fft2(x)).*fft2(cnv2pad(y, sf))), 1:sf(1), 1:sf(2));
 elseif all(sx <= sy)
   sf = sy + sx - 1;
