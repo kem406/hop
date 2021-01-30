@@ -130,8 +130,8 @@ def cnv2tp(x, y, srf):
         debug2=0
         debug3=0
         debug4=0
-        debug5=0
-        debug6=0
+        debug5=1
+        debug6=1
         #f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))), np.fft.fft2(y)))
         #print(x.shape)
         #print(y.shape)
