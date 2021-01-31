@@ -24,7 +24,7 @@ test = imageio.imread(y_fname(10))
 # intially there is no x
 x = np.array([])
 
-for i in range(1,41):
+for i in range(1,5):
   # load the next observed image
   fname = y_fname(i)
   print('Processing {}'.format(fname))

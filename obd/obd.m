@@ -52,9 +52,16 @@ if ~isempty(x)
   % estimate PSF with multiplicative updates
   f = obd_update(f, x, y, maxiter(1), clipping, srf);
   sumf = sum(f(:));
+  fprintf("sumf:");
+  fprintf('%f\n', sum(f(:)));
+  fprintf("sumx before:");
+  fprintf('%f\n', sum(x(:)));
   f = f/sumf;                         % normalize f
   x = sumf*x;                         % adjust x as well
+  fprintf("sumx after:");
+  fprintf('%f\n', sum(x(:)));
  sx = size(x);
+ 
 else
   f = zeros(sf);
   sf2 = ceil(sf/2);
@@ -131,7 +138,7 @@ sy = size(y);
 % perform the linear convolution in Fourier space
 if all(sx >= sy)
   sf = sx - sy + 1;
-  placeholder=0
+  %placeholder=0;
   fft_x=conj(fft2(x));
   %clf
   %subplot(131), imagesc(abs(fftshift(fft_x))), title(sprintf('fft_x')); axis equal, axis tight
@@ -156,7 +163,7 @@ if all(sx >= sy)
   %clf
   %subplot(131), imagesc(f), title(sprintf('f')); axis equal, axis tight
   %drawnow
-  placeholder=1
+  %placeholder=1;
   
   %f = cnv2slice(ifft2(conj(fft2(x)).*fft2(cnv2pad(y, sf))), 1:sf(1), 1:sf(2));
 elseif all(sx <= sy)
