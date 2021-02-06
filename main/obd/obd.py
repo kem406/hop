@@ -1,3 +1,5 @@
+import h5py
+
 import numpy as np
 import pdb
 import matplotlib.pyplot as plt
@@ -137,7 +139,7 @@ def cnv2tp(x, y, srf):
         debug3=0
         debug4=0
         debug5=0
-        debug6=0
+        debug6=1
         #f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))), np.fft.fft2(y)))
         #print(x.shape)
         #print(y.shape)
@@ -194,6 +196,8 @@ def cnv2tp(x, y, srf):
             fig, ax = plt.subplots(1,2, figsize=(24., 8.))
             ax[0].imshow(f, origin='lower')
             plt.show()
+            #with h5py.File('main/obd/f.hdf5', 'w') as hdf:
+            #    hdf.create_dataset('dataset1', data=f)
         #pdb.set_trace()
     elif np.all(np.less_equal(sx, sy)):
         sf = sy + sx
