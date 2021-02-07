@@ -156,7 +156,7 @@ if all(sx >= sy)
   %subplot(131), imagesc(abs(fftshift(mult1))), title(sprintf('mult1')); axis equal, axis tight
   %drawnow
   ifft_xy=ifft2(mult1);
-  if ~isfile('f2.h5') || h5info('f2.h5').Name ~= '/'
+  if isfile('f2.h5') & h5info('f2.h5').Name ~= '/'
     h5create('f2.h5','/myDataset',size(ifft_xy));
   end
   h5write('f2.h5','/myDataset',ifft_xy);
