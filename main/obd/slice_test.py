@@ -27,7 +27,7 @@ with h5py.File(filename2, "r") as f2:
     # Get the data
     data2 = list(f2[a_group_key])
 
-B=np.array(data2)
+B=np.transpose(np.array(data2))
 fig, ax = plt.subplots(1,1, figsize=(24., 8.))
 ax.imshow(B, origin='lower')
 plt.show()
