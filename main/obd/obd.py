@@ -29,14 +29,14 @@ def obd(x, y, sf, maxiter, clipping=np.inf, srf=1):
     # estimate PSF with multiplicative updates
     f = obd_update(f, x, y, maxiter[0], clipping, srf)
     sumf = np.sum(f)
-    print("sumf:")
-    print(sumf)
-    print("sumx before:")
-    print(np.sum(x))
+    #print("sumf:")
+    #print(sumf)
+    #print("sumx before:")
+    #print(np.sum(x))
     f = f/sumf # normalize f
     x = sumf*x # adjust x as well
-    print("sumx after:")
-    print(np.sum(x))
+    #print("sumx after:")
+    #print(np.sum(x))
     sx = np.array(np.shape(x))
 
   else:
