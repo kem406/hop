@@ -8,7 +8,11 @@ import pdb
 
 ## parameters
 sf = np.array([50, 50])       # size of the PSF
+<<<<<<< HEAD
 maxiter = [50, 2]    # number of iterations for f and x
+=======
+maxiter = [2, 2]    # number of iterations for f and x
+>>>>>>> 38e2be1e6c21b94fe95a4855ced49a580352b7a7
 n = 40              # number of images
 clipping = np.inf      # maximally acceptable pixel (for saturation correction)
 srf = 1.0           # superresolution factor
@@ -24,7 +28,11 @@ test = imageio.imread(y_fname(10))
 # intially there is no x
 x = np.array([])
 
+<<<<<<< HEAD
 for i in range(1,41):
+=======
+for i in range(1,3):
+>>>>>>> 38e2be1e6c21b94fe95a4855ced49a580352b7a7
   # load the next observed image
   fname = y_fname(i)
   print('Processing {}'.format(fname))

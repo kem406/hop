@@ -12,8 +12,8 @@ clear      % memory
 
 % parameters
 sf = [50, 50];       % size of the PSF
-maxiter = [50, 1];   % number of iterations for f and x
-n = 40;              % number of images
+maxiter = [1, 1];   % number of iterations for f and x
+n = 2;              % number of images
 clipping = Inf;      % maximally acceptable pixel (for saturation correction)
 srf = 1.0;           % superresolution factor
 
@@ -22,7 +22,7 @@ imagepath = 'data/epsilon_lyrae';
 y_fname = @(i) fullfile(imagepath, sprintf('%08d.png', i));
 
 % intially there is no x
-x = []
+x = [];
 
 % iterate over all images
 for i = 1:n

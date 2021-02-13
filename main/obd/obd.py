@@ -1,3 +1,5 @@
+import h5py
+
 import numpy as np
 import pdb
 import matplotlib.pyplot as plt
@@ -136,7 +138,7 @@ def cnv2tp(x, y, srf):
         debug2=0
         debug3=0
         debug4=0
-        debug5=0
+        debug5=1
         debug6=0
         #f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))), np.fft.fft2(y)))
         #print(x.shape)
@@ -149,8 +151,8 @@ def cnv2tp(x, y, srf):
         fft_x=np.fft.fft2(x)
         if debug1:
             print("fft_x:")
-            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-            ax[0].imshow(abs(np.fft.fftshift(fft_x)), origin='lower')
+            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+            ax.imshow(abs(np.fft.fftshift(fft_x)), origin='lower')
             plt.show()
 
         #breakpoint()
@@ -158,41 +160,43 @@ def cnv2tp(x, y, srf):
         pad_y=cnv2pad(y, sf)
         if debug2:
             print("pad_y:")
-            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-            ax[0].imshow(pad_y, origin='lower')
+            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+            ax.imshow(pad_y, origin='lower')
             plt.show()
         #breakpoint()
 
         fft_y=np.fft.fft2(pad_y)
         if debug3:
             print("fft_y:")
-            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-            ax[0].imshow(abs(np.fft.fftshift(fft_y)), origin='lower')
+            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+            ax.imshow(abs(np.fft.fftshift(fft_y)), origin='lower')
             plt.show()
         #breakpoint()
 
         mult1=np.multiply(fft_x, fft_y)
         if debug4:
             print("mult1:")
-            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-            ax[0].imshow(abs(np.fft.fftshift(mult1)), origin='lower')
+            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+            ax.imshow(abs(np.fft.fftshift(mult1)), origin='lower')
             plt.show()
         #breakpoint()
 
         ifft_xy=np.fft.ifft2(mult1)
         if debug5:
             print("ifft_xy:")
-            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-            ax[0].imshow(abs(ifft_xy), origin='lower')
+            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+            ax.imshow(abs(ifft_xy), origin='lower')
             plt.show()
         #f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
         #pdb.set_trace()
         #f = cnv2slice(np.real(f), slice(int(sy[0]/2-sf[0]/2), int(sy[0]/2+sf[0]/2)), slice(int(sy[1]/2-sf[1]/2), int(sy[1]/2+sf[1]/2)))
+            with h5py.File('main/obd/f1.hdf5', 'w') as hdf:
+                hdf.create_dataset('dataset1', data=ifft_xy)
         f = cnv2slice(np.real(ifft_xy), slice(0+25, sf[0]+25), slice(0+11, sf[1]+11))
         if debug6:
             print("f:")
-            fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-            ax[0].imshow(f, origin='lower')
+            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+            ax.imshow(f, origin='lower')
             plt.show()
         #pdb.set_trace()
     elif np.all(np.less_equal(sx, sy)):
