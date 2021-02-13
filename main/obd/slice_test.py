@@ -31,3 +31,29 @@ B=np.transpose(np.array(data2))
 fig, ax = plt.subplots(1,1, figsize=(24., 8.))
 ax.imshow(B, origin='lower')
 plt.show()
+
+A=A[0:161,0:181]
+A.size
+sA = np.array(np.shape(A))
+sA
+sB = np.array(np.shape(B))
+sB
+C=np.roll(A,200,0)
+C=np.roll(C,200,1)
+fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+ax.imshow(np.abs(C), origin='lower')
+plt.show()
+sA
+maxSize=99999
+for i in range (0,sA[1]):
+    for j in range (0,sA[0]):
+        C=np.roll(A,i,0)
+        C=np.roll(C,j,1)
+        D=np.multiply(C,B) - np.multiply(B,B)
+        #print (abs(np.sum(D)), i, j)
+        print(abs(np.sum(D)))
+        print(maxSize)
+        if (abs(np.sum(D))<maxSize):
+            print(maxSize)
+            maxSize=abs(np.sum(D))
+maxSize
