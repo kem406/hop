@@ -44,16 +44,36 @@ fig, ax = plt.subplots(1,1, figsize=(24., 8.))
 ax.imshow(np.abs(C), origin='lower')
 plt.show()
 sA
-maxSize=99999
+maxSize=abs(np.sum(np.multiply(A,B) - np.multiply(B,B)))
+maxSize
+graph=np.ones((181,161))
+graph.shape
+maxSize=abs(np.sum(np.multiply(A,B) - np.multiply(B,B)))
 for i in range (0,sA[1]):
     for j in range (0,sA[0]):
-        C=np.roll(A,i,0)
-        C=np.roll(C,j,1)
+        C=np.roll(A,i,1)
+        C=np.roll(C,j,0)
         D=np.multiply(C,B) - np.multiply(B,B)
-        #print (abs(np.sum(D)), i, j)
-        print(abs(np.sum(D)))
-        print(maxSize)
-        if (abs(np.sum(D))<maxSize):
-            print(maxSize)
+        graph[i,j]=abs(np.sum(D))
+        if (np.greater(abs(np.sum(D)),maxSize)):
             maxSize=abs(np.sum(D))
+            #fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+            #ax.imshow(np.abs(C), origin='lower')
+            #plt.show()
+            print(maxSize,i,j)
 maxSize
+fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+ax.imshow(np.abs(graph), origin='lower')
+plt.show()
+E=np.roll(A,139,0)
+E=np.roll(E,171,1)
+fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+ax.imshow(np.abs(E), origin='lower')
+plt.show()
+fig, ax = plt.subplots(1,1, figsize=(24., 8.))
+ax.imshow(np.abs(B), origin='lower')
+plt.show()
+
+abs(np.sum(np.multiply(B,B) - np.multiply(B,B)))
+abs(np.sum(A))
+abs(np.sum(B))

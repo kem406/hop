@@ -138,7 +138,7 @@ def cnv2tp(x, y, srf):
         debug2=0
         debug3=0
         debug4=0
-        debug5=1
+        debug5=0
         debug6=0
         #f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))), np.fft.fft2(y)))
         #print(x.shape)
@@ -182,6 +182,8 @@ def cnv2tp(x, y, srf):
         #breakpoint()
 
         ifft_xy=np.fft.ifft2(mult1)
+        ifft_xy=np.roll(ifft_xy,171,1)
+        ifft_xy=np.roll(ifft_xy,139,0)
         if debug5:
             print("ifft_xy:")
             fig, ax = plt.subplots(1,1, figsize=(24., 8.))
@@ -192,7 +194,8 @@ def cnv2tp(x, y, srf):
         #f = cnv2slice(np.real(f), slice(int(sy[0]/2-sf[0]/2), int(sy[0]/2+sf[0]/2)), slice(int(sy[1]/2-sf[1]/2), int(sy[1]/2+sf[1]/2)))
             with h5py.File('main/obd/f1.hdf5', 'w') as hdf:
                 hdf.create_dataset('dataset1', data=ifft_xy)
-        f = cnv2slice(np.real(ifft_xy), slice(0+25, sf[0]+25), slice(0+11, sf[1]+11))
+        #f = cnv2slice(np.real(ifft_xy), slice(0+25, sf[0]+25), slice(0+11, sf[1]+11))
+        f = cnv2slice(np.real(ifft_xy), slice(0, sf[0]), slice(0, sf[1]))
         if debug6:
             print("f:")
             fig, ax = plt.subplots(1,1, figsize=(24., 8.))
