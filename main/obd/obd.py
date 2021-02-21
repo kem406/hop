@@ -182,8 +182,8 @@ def cnv2tp(x, y, srf):
         #breakpoint()
 
         ifft_xy=np.fft.ifft2(mult1)
-        ifft_xy=np.roll(ifft_xy,172,1) #total - 1/4 psf
-        ifft_xy=np.roll(ifft_xy,140,0) #total - 1/2 psf
+        ifft_xy=np.roll(ifft_xy,172,1) #total - 1/4 psf - 172
+        ifft_xy=np.roll(ifft_xy,140,0) #total - 1/2 psf - 140
         if debug5:
             print("ifft_xy:")
             fig, ax = plt.subplots(1,1, figsize=(24., 8.))
