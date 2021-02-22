@@ -31,7 +31,7 @@ def convert(img, target_type_min, target_type_max, target_type):
     new_img = (a * img + b).astype(target_type)
     return new_img
 
-for i in range(0,101):
+for i in range(51,101):
     for j in range(0,40):
         # load the next observed image
         fname = y_fname(i,j)
@@ -44,5 +44,6 @@ for i in range(0,101):
         #ax[1].imshow(f, origin='lower')
         #ax[2].imshow(x, origin='lower')
         #plt.show()
-    x=convert(x, 0, 255, np.uint8)
+    #x=x.astype(np.uint8)
+    #x=convert(x, 0, 255, np.uint8)
     imageio.imwrite(imagepath+'super_resolution/super_resolution_'+str(i)+'.png', x)
