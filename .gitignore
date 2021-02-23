@@ -4,5 +4,8 @@ main/obd/__pycache__
 transit_mocks/data/*
 TurbulentPSFMocks/data/*
 
+#checkpoints
+*checkpoint.ipynb
+
 # Dropbox
 *.DS_Store
