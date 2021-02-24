@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import imageio
 
 #Rewrite with everything square and consistent
 #All images will be in powers of 2 square size for ease... just massage data to be so
@@ -18,11 +19,68 @@ def obd(x,y,sf,maxiter):
 
     #if there is already a guess for x, use it to guess f
     if sx[0] != 0:
-        f= x
+        # initialize PSF as flat w/ correct intensity
+        f = np.linalg.norm(np.ndarray.flatten(y)) / np.linalg.norm(np.ndarray.flatten(x))
+        f = f * np.ones(sf) / np.sqrt(np.prod(sf, axis=0))
+
+        #lets do GD on f given x and y
+        #obd update(f,x,y)
+        for i in range(0,maxiter[0]):
+            #I am everywhere here making assumptions about sx,sf,and sy.
+            #Just let me do that a minute please.
+            ytmp = np.multiply(np.fft.fft2(x,s=sx), np.fft.fft2(f, s=sx))
+            ytmp = setZero(np.real(np.fft.ifft2(ytmp)))[sf[0]-1:,sf[1]-1:] #so they do not seem to do the np.real here... what does pos mean in that case?
+
+            Y = np.zeros(sx)
+            Y[sf[0]-1:,sf[1]-1:] = y
+            num = np.multiply(np.conj(np.fft.fft2(x,s=sx)),np.fft.fft2(Y,s=sx))
+            num = setZero(np.real(np.fft.ifft2(num)))[:sf[0],:sf[0]]
+
+            Y = np.zeros(sx) #,dtype=np.complex64)
+            Y[sf[0]-1:,sf[1]-1:] = ytmp
+            denom = np.multiply(np.conj(np.fft.fft2(x,s=sx)),np.fft.fft2(Y,s=sx))
+            denom = setZero(np.real(np.fft.ifft2(denom)))[:sf[0],:sf[0]]
+
+            tol = 1e-10
+            factor = np.divide((num+tol),(denom+tol))
+            f = np.multiply(f, factor)
+
+        #this normalization seem suspect for making the light curve
+        sumf = np.sum(f)
+        f = f/sumf # normalize f
+        x = sumf*x # adjust x as well
+        #so this is shifting all the power from f to x
+        #f is always unit normalized
+        #now we guess the structure of x given y and that we have
+        #renormalized x to have the same power as y
+        ## actually we are normalizing by abs(image) not image
+        ## power. This makes me feel uncomfortable.
 
     #now that we have good guess for f, use it to guess x given y
+        #lets do GD on x given f and y
+        #obd update(x,f,y)
+        for i in range(0,maxiter[1]):
+            #I am everywhere here making assumptions about sx,sf,and sy.
+            #Just let me do that a minute please.
+            ytmp = np.multiply(np.fft.fft2(x,s=sx), np.fft.fft2(f, s=sx))
+            ytmp = setZero(np.real(np.fft.ifft2(ytmp)))[sf[0]-1:,sf[1]-1:] #so they do not seem to do the np.real here... what does pos mean in that case?
+
+            Y = np.zeros(sx)
+            Y[sf[0]-1:,sf[1]-1:] = y
+            num = np.multiply(np.conj(np.fft.fft2(f,s=sx)),np.fft.fft2(Y,s=sx))
+            num = setZero(np.real(np.fft.ifft2(num)))
+
+            Y = np.zeros(sx) #,dtype=np.complex64)
+            Y[sf[0]-1:,sf[1]-1:] = ytmp
+            denom = np.multiply(np.conj(np.fft.fft2(f,s=sx)),np.fft.fft2(Y,s=sx))
+            denom = setZero(np.real(np.fft.ifft2(denom)))
+
+            tol = 1e-10
+            factor = np.divide((num+tol),(denom+tol))
+            x = np.multiply(x, factor)
 
         return x, f
+
     #intialization of f from scratch
     else:
         f = np.zeros(sf)
@@ -32,58 +90,19 @@ def obd(x,y,sf,maxiter):
 
     #using our intialization of f, use it to guess x given y
         ## here I am assuming sf<sy
-        sx = sf + sy
+        sx = sf + sy - 1
         Y = np.zeros(sx)
-        Y[sf[0]:,sf[1]:] = y
+        Y[sf[0]-1:,sf[1]-1:] = y
         x = np.multiply(np.conj(np.fft.fft2(f,s=sx)),np.fft.fft2(Y,s=sx))
-        x = np.real(np.fft.ifft2(x))
+        x = setZero(np.real(np.fft.ifft2(x)))
         ## to be clear, this is a waste of time, beacuse we know we are choosing x=y1
         ## that is what the delta function means.
         ## This was useful coding practice because it means the image is centered using my conventions
         ## need to understand why this padding is really necessary
+        ## these lines may be useful for srf cases which we are ignoring rn
         return x, f
 
 # function that converts all negative elements to zero
 def setZero(x):
     x[x<0] = 0
     return x
-
-##testing region
-
-np.zeros(np.array([64,64]))
-
-x,f = obd([],z,np.array([64, 64]),[50,2])
-
-plt.imshow(x[:256,:256])
-
-plt.imshow(x)
-
-
-np.unravel_index(np.argmax(x), x.shape)
-
-
-plt.imshow(f)
-
-test = np.zeros((256,256))
-
-def star_flux(flux,sigma_x = 6.,sigma_y = 12.,size = 256):
-    x = np.linspace(-size/2, size/2-1, size)
-    y = np.linspace(-size/2, size/2-1, size)
-    x, y = np.meshgrid(x, y)
-
-    z = flux*(1/(2*np.pi*sigma_x*sigma_y) * np.exp(-(x**2/(2*sigma_x**2)
-         + y**2/(2*sigma_y**2))))
-    return z
-
-z = star_flux(1)
-
-plt.imshow(z)
-
-
-test.shape[0]
-
-test1 = np.zeros((256,256))
-test1[128,128] = 1
-np.fft.fftshift(test1)
-
-np.array([50, 50])[0]/2

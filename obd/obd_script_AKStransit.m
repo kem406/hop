@@ -11,7 +11,7 @@
 clear      % memory
 
 % parameters
-sf = [100, 100];       % size of the PSF
+sf = [78, 78];       % size of the PSF
 maxiter = [50, 1];   % number of iterations for f and x
 n = 39;              % number of images
 clipping = Inf;      % maximally acceptable pixel (for saturation correction)

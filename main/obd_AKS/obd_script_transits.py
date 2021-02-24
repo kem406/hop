@@ -13,28 +13,28 @@ clipping = np.inf      # maximally acceptable pixel (for saturation correction)
 srf = 1.0           # superresolution factor
 
 # how are the filenames generated?
-imagepath = 'obd/data/epsilon_lyrae/'
+imagepath = 'transit_mocks/data1/'
 
 def y_fname(i):
-    return imagepath+"{0:08d}".format(i)+'.png'
+    return imagepath+"transit_test_0_slice_{0:d}".format(i)+'.tiff'
 
 test = imageio.imread(y_fname(10))
 
 # intially there is no x
 x = np.array([])
 
-for i in range(1,n+1):
+for i in range(1,40):
   # load the next observed image
   fname = y_fname(i)
   print('Processing {}'.format(fname))
   y = imageio.imread(fname)
-  y = y[:,20:132,1].astype(np.float64)   # use only first color channel
+  y = y.astype(np.float64)   # use only first color channel
 
   ##### THE MAIN WORK HORSE #####
   x, f = ob.obd(x, y, sf, maxiter)
 
   fig, ax = plt.subplots(1,3, figsize=(24., 8.))
   ax[0].imshow(y, origin='lower')
-  ax[1].imshow(f, origin='upper')
+  ax[1].imshow(f, origin='lower')
   ax[2].imshow(x, origin='lower')
   plt.show()

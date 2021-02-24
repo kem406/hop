@@ -11,9 +11,9 @@
 clear      % memory
 
 % parameters
-sf = [50, 50];       % size of the PSF
-maxiter = [1, 1];   % number of iterations for f and x
-n = 2;              % number of images
+sf = [64, 64];       % size of the PSF
+maxiter = [40, 1];   % number of iterations for f and x
+n = 40;              % number of images
 clipping = Inf;      % maximally acceptable pixel (for saturation correction)
 srf = 1.0;           % superresolution factor
 
@@ -30,21 +30,21 @@ for i = 1:n
   fname = y_fname(i);
   fprintf('[%s.m] processing %s\n', mfilename, fname);
   y = imread(fname);
-  y = double(y(:,:,1));   % use only first color channel
+  y = double(y(:,21:132,1));   % use only first color channel
 
   %%%%% THE MAIN WORK HORSE %%%%%
   [x, f] = obd(x, y, sf, maxiter, clipping, srf);
 
-  if 1
-    % show intermediate output
-    clf
-    subplot(131), imagesc(y), title(sprintf('observed image y%d', i)); axis equal, axis tight
-    if exist('f', 'var')
-      subplot(132), imagesc(f), title(sprintf('estimated PSF f%d', i)); axis equal, axis tight
-    end
-    subplot(133), imagesc(x), title(sprintf('estimated image x%d', i)); axis equal, axis tight
-    %colormap gray
-    drawnow
-  end
+%   if 1
+%     % show intermediate output
+%     clf
+%     subplot(131), imagesc(y), title(sprintf('observed image y%d', i)); axis equal, axis tight
+%     if exist('f', 'var')
+%       subplot(132), imagesc(f), title(sprintf('estimated PSF f%d', i)); axis equal, axis tight
+%     end
+%     subplot(133), imagesc(x), title(sprintf('estimated image x%d', i)); axis equal, axis tight
+%     %colormap gray
+%     drawnow
+%   end
 end
 fprintf('done!  the result is in variable "x", try e.g. "imagesc(x)"\n');
