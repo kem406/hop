@@ -12,10 +12,15 @@ clipping = np.inf      # maximally acceptable pixel (for saturation correction)
 srf = 1.0           # superresolution factor
 
 # how are the filenames generated?
-imagepath = 'transit_mocks/data/'
+imagepath = 'transit_mocks/data1/'
+
+def gt_y_fname(i):
+    return imagepath+'transit_test_gt_'+str(i)+'.tiff'
+#transit_test_0_slice_0
+test = imageio.imread(gt_y_fname(1))
 
 def y_fname(i,j):
-    return imagepath+'transit_test_'+str(i)+'_slice_'+str(j)+'.png'
+    return imagepath+'transit_test_'+str(i)+'_slice_'+str(j)+'.tiff'
 #transit_test_0_slice_0
 test = imageio.imread(y_fname(1,1))
 
