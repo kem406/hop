@@ -52,14 +52,14 @@ if ~isempty(x)
   % estimate PSF with multiplicative updates
   f = obd_update(f, x, y, maxiter(1), clipping, srf);
   sumf = sum(f(:));
-  fprintf("sumf:");
-  fprintf('%f\n', sum(f(:)));
-  fprintf("sumx before:");
-  fprintf('%f\n', sum(x(:)));
+%   fprintf("sumf:");
+%   fprintf('%f\n', sum(f(:)));
+%   fprintf("sumx before:");
+%   fprintf('%f\n', sum(x(:)));
   f = f/sumf;                         % normalize f
   x = sumf*x;                         % adjust x as well
-  fprintf("sumx after:");
-  fprintf('%f\n', sum(x(:)));
+%   fprintf("sumx after:");
+%   fprintf('%f\n', sum(x(:)));
  sx = size(x);
  
 else
@@ -88,7 +88,7 @@ for i = 1:maxiter
   ytmp = ytmp .* m;                 % deal with clipping
   nom = pos(cnv2tp(x, y, srf));
   denom = pos(cnv2tp(x, ytmp, srf));
-  tol = 1e-10;
+  tol = 1e-5;
   factor = (nom+tol) ./ (denom+tol);
   factor = reshape(factor, sf);
   f = f .* factor;
@@ -156,10 +156,10 @@ if all(sx >= sy)
   %subplot(131), imagesc(abs(fftshift(mult1))), title(sprintf('mult1')); axis equal, axis tight
   %drawnow
   ifft_xy=ifft2(mult1);
-  if ~isfile('f2.h5') || h5info('f2.h5').Name ~= '/'
-    h5create('f2.h5','/myDataset',size(ifft_xy));
-  end
-  h5write('f2.h5','/myDataset',ifft_xy);
+%   if ~isfile('f2.h5') || h5info('f2.h5').Name ~= '/'
+%     h5create('f2.h5','/myDataset',size(ifft_xy));
+%   end
+%   h5write('f2.h5','/myDataset',ifft_xy);
   %clf
   %subplot(131), imagesc(ifft_xy), title(sprintf('ifft_xy')); axis equal, axis tight
   %drawnow
