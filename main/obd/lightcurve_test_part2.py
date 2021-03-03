@@ -1,6 +1,6 @@
 ## imports
 import numpy as np
-import main.obd.obd as ob
+import main.obd_AKS.obd as ob
 import imageio
 
 #Plotting Packages
@@ -26,11 +26,12 @@ for i in range (1,101):
     #print(np.sum(imageio.imread(gt_y_fname(i))))
     plot0_y=np.concatenate((plot0_y, np.array([np.sum(imageio.imread(gt_y_fname(i)))])), axis=0)
     plot0_x=np.concatenate((plot0_x, np.array([i])), axis=0)
-print(plot0_x)
-print(plot0_y)
+#print(plot0_x)
+#print(plot0_y)
 plt.scatter(plot0_x, plot0_y)
 
-plot=np.array([np.sum(imageio.imread(y_fname(0)))])
-for i in range (1,101):
-    plot=np.concatenate((plot, np.array([np.sum(imageio.imread(y_fname(i)))])), axis=0)
-print(plot)
+plot_y=np.array([np.sum(imageio.imread(y_fname(0)))])
+for i in range (1,17):
+    plot_y=np.concatenate((plot_y, np.array([np.sum(imageio.imread(y_fname(i)))])), axis=0)
+print(plot_y)
+plt.scatter(plot0_x[0:18], plot_y)
