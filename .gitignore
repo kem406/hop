@@ -1,4 +1,5 @@
 main/obd/__pycache__
+scratch/AKS/__pycache__
 
 # Data that is large
 transit_mocks/data/*
