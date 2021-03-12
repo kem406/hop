@@ -36,7 +36,7 @@ def debayer(inpname):
 
     return im
 
-def fits_to_png(inpname,outname):
+def fits_to_png(inpname,outname,maxval=65535.0):
     im = debayer(inpname)
-    im /= np.max(im)
+    im /= maxval
     plt.imsave(outname,im)
