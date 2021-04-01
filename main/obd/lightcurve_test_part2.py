@@ -20,6 +20,7 @@ def gt_y_fname(i):
 test = imageio.imread(gt_y_fname(1))
 #print(np.sum(test))
 
+# PART 1: GROUND TRUTH PLOT
 plot0_y=np.array([np.sum(imageio.imread(gt_y_fname(0)))])
 plot0_x=np.array([0])
 for i in range (1,101):
@@ -30,6 +31,7 @@ for i in range (1,101):
 #print(plot0_y)
 plt.scatter(plot0_x, plot0_y)
 
+# PART 2: SIMULATED DATA PLOT
 plot_y=np.array([np.sum(imageio.imread(y_fname(0)))])
 for i in range (1,101):
     plot_y=np.concatenate((plot_y, np.array([np.sum(imageio.imread(y_fname(i)))])), axis=0)
