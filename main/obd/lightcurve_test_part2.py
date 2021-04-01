@@ -31,7 +31,7 @@ for i in range (1,101):
 plt.scatter(plot0_x, plot0_y)
 
 plot_y=np.array([np.sum(imageio.imread(y_fname(0)))])
-for i in range (1,17):
+for i in range (1,101):
     plot_y=np.concatenate((plot_y, np.array([np.sum(imageio.imread(y_fname(i)))])), axis=0)
-print(plot_y)
-plt.scatter(plot0_x[0:18], plot_y)
+#print(plot_y)
+plt.scatter(plot0_x, plot_y)

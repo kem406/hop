@@ -44,7 +44,7 @@ def obd(x,y,sf,maxiter):
 
             tol = 1e-10
             factor = np.divide((num+tol),(denom+tol))
-            factor = factor*filters.window(('tukey',0.3),(sy[0],sy[1]),warp_kwargs={'order':3}) #attempt to eliminate edge spikes
+            factor = factor*filters.window(('tukey',0.3),(sf[0],sf[1]),warp_kwargs={'order':3}) #attempt to eliminate edge spikes
             f = np.multiply(f, factor)
 
         #this normalization seem suspect for making the light curve
@@ -79,7 +79,7 @@ def obd(x,y,sf,maxiter):
 
             tol = 1e-10
             factor = np.divide((num+tol),(denom+tol))
-            factor = factor*filters.window(('tukey',0.3),(sy[0],sy[1]),warp_kwargs={'order':3}) #attempt to eliminate edge spikes
+            factor = factor*filters.window(('tukey',0.3),(sx[0],sx[1]),warp_kwargs={'order':3}) #attempt to eliminate edge spikes
             x = np.multiply(x, factor)
 
         return x, f
