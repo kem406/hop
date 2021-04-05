@@ -1,6 +1,6 @@
 ## imports
 import numpy as np
-import main.obd_AKS.obd as ob
+import obd as ob
 import imageio
 import matplotlib.pyplot as plt
 plt.style.use('dark_background')
@@ -13,7 +13,7 @@ clipping = np.inf      # maximally acceptable pixel (for saturation correction)
 srf = 1.0           # superresolution factor
 
 # how are the filenames generated?
-imagepath = 'obd/data/epsilon_lyrae/'
+imagepath = '../../obd/data/epsilon_lyrae/'
 
 def y_fname(i):
     return imagepath+"{0:08d}".format(i)+'.png'
