@@ -1,219 +1,111 @@
-import h5py
-
 import numpy as np
-import pdb
 import matplotlib.pyplot as plt
+import imageio
+from skimage import filters
 
-def obd(x, y, sf, maxiter, clipping=np.inf, srf=1):
+#Rewrite with everything square and consistent
+#All images will be in powers of 2 square size for ease... just massage data to be so
 
-  # find dimensions of y
-  sy = np.array(np.shape(y))
+def obd(x,y,sf,maxiter):
+    # x is estimate of deblurred image
+    # y is observed image
+    # sf size of psf
+    # max iters for gradient descent
 
-  # multiply sy and sf by srf and round down to nearest integer if srf above 1
-  if (srf > 1):
-    sy = np.floor(srf * sy)
-    sf = np.floor(srf * sf)
-
-  # srf below 1 is invalid by def. since it is ratio of higher freq to lower freq
-  elif (srf < 1):
-    raise Exception('superresolution factor must be one or larger')
-
-  sx = np.array(np.shape(x))
-  if sx[0] != 0:
-    # check sizes
-    if any(sf != sx - sy + 1):
-      Exception('size mismatch')
-
-    # initialize PSF
-    f = np.linalg.norm(np.ndarray.flatten(y)) / np.linalg.norm(np.ndarray.flatten(x))
-    f = f * np.ones(sf) / np.sqrt(np.prod(sf, axis=0))
-
-    # estimate PSF with multiplicative updates
-    f = obd_update(f, x, y, maxiter[0], clipping, srf)
-    sumf = np.sum(f)
-    #print("sumf:")
-    #print(sumf)
-    #print("sumx before:")
-    #print(np.sum(x))
-    f = f/sumf # normalize f
-    x = sumf*x # adjust x as well
-    #print("sumx after:")
-    #print(np.sum(x))
+    # we will stay consistent with the notation to keep f as the psf
     sx = np.array(np.shape(x))
+    sy = np.array(np.shape(y))
 
-  else:
-    f = np.zeros(sf)
-    sf2 = np.ceil(sf/2).astype(np.int32)
-    f[sf2[0],sf2[1]] = 1
-    sumf = np.sum(f)
-    f = f/sumf
-    sx = sy + sf - 1
-    x = setZero(cnv2tp(f, y, srf));
-    return x, f
-  # improve true image x with multiplicative updates
-  x = obd_update(x, f, y, maxiter[1], clipping, srf);
-  return x, f
+    ### Update/Guess the PSF
 
-# function to improve true image x with multiplicative updates
-def obd_update(f,x,y,maxiter,clipping,srf): #this is where gradient descent happens in a multiplicative way
-#depending on the value of sf the roles of f and x can be swapped
-  sf = np.array(f.shape)
-  sy = np.array(y.shape)   # for srf > 1, the low resolution y
-  m = np.less(y, clipping)*1
-  y = np.multiply(y,m)
-  for i in range (1, maxiter):
-    ytmp = setZero(cnv2(x, f, sy))
-    ytmp = np.multiply(ytmp, m)
-    num = setZero(cnv2tp(x, y, srf))
-    denom = setZero(cnv2tp(x, ytmp, srf))
-    tol = 1e-10
-    factor = np.divide((num+tol), (denom+tol))
-    factor = np.reshape(factor, sf)
-    f = np.multiply(f, factor)
-  return f #, num, denom, factor, ytmp
+    #if there is already a guess for x, use it to guess f
+    if sx[0] != 0:
+        # initialize PSF as flat w/ correct intensity
+        f = np.linalg.norm(np.ndarray.flatten(y)) / np.linalg.norm(np.ndarray.flatten(x))
+        f = f * np.ones(sf) / np.sqrt(np.prod(sf, axis=0))
+
+        #lets do GD on f given x and y
+        #obd update(f,x,y)
+        for i in range(0,maxiter[0]):
+            #I am everywhere here making assumptions about sx,sf,and sy.
+            #Just let me do that a minute please.
+            ytmp = np.multiply(np.fft.fft2(x,s=sx), np.fft.fft2(f, s=sx))
+            ytmp = setZero(np.real(np.fft.ifft2(ytmp)))[sf[0]-1:,sf[1]-1:] #so they do not seem to do the np.real here... what does pos mean in that case?
+
+            Y = np.zeros(sx)
+            Y[sf[0]-1:,sf[1]-1:] = y
+            num = np.multiply(np.conj(np.fft.fft2(x,s=sx)),np.fft.fft2(Y,s=sx))
+            num = setZero(np.real(np.fft.ifft2(num)))[:sf[0],:sf[0]]
+
+            Y = np.zeros(sx) #,dtype=np.complex64)
+            Y[sf[0]-1:,sf[1]-1:] = ytmp
+            denom = np.multiply(np.conj(np.fft.fft2(x,s=sx)),np.fft.fft2(Y,s=sx))
+            denom = setZero(np.real(np.fft.ifft2(denom)))[:sf[0],:sf[0]]
+
+            tol = 1e-10
+            factor = np.divide((num+tol),(denom+tol))
+            factor = factor*filters.window(('tukey',0.3),(sf[0],sf[1]),warp_kwargs={'order':3}) #attempt to eliminate edge spikes
+            f = np.multiply(f, factor)
+
+        #this normalization seem suspect for making the light curve
+        sumf = np.sum(f)
+        f = f/sumf # normalize f
+        x = sumf*x # adjust x as well
+        #so this is shifting all the power from f to x
+        #f is always unit normalized
+        #now we guess the structure of x given y and that we have
+        #renormalized x to have the same power as y
+        ## actually we are normalizing by abs(image) not image
+        ## power. This makes me feel uncomfortable.
+
+    #now that we have good guess for f, use it to guess x given y
+        #lets do GD on x given f and y
+        #obd update(x,f,y)
+        for i in range(0,maxiter[1]):
+            #I am everywhere here making assumptions about sx,sf,and sy.
+            #Just let me do that a minute please.
+            ytmp = np.multiply(np.fft.fft2(x,s=sx), np.fft.fft2(f, s=sx))
+            ytmp = setZero(np.real(np.fft.ifft2(ytmp)))[sf[0]-1:,sf[1]-1:] #so they do not seem to do the np.real here... what does pos mean in that case?
+
+            Y = np.zeros(sx)
+            Y[sf[0]-1:,sf[1]-1:] = y
+            num = np.multiply(np.conj(np.fft.fft2(f,s=sx)),np.fft.fft2(Y,s=sx))
+            num = setZero(np.real(np.fft.ifft2(num)))
+
+            Y = np.zeros(sx) #,dtype=np.complex64)
+            Y[sf[0]-1:,sf[1]-1:] = ytmp
+            denom = np.multiply(np.conj(np.fft.fft2(f,s=sx)),np.fft.fft2(Y,s=sx))
+            denom = setZero(np.real(np.fft.ifft2(denom)))
+
+            tol = 1e-10
+            factor = np.divide((num+tol),(denom+tol))
+            factor = factor*filters.window(('tukey',0.3),(sx[0],sx[1]),warp_kwargs={'order':3}) #attempt to eliminate edge spikes
+            x = np.multiply(x, factor)
+
+        return x, f
+
+    #intialization of f from scratch
+    else:
+        f = np.zeros(sf)
+        mid = int(f.shape[0]/2)
+        f[mid,mid] = 1 #delta function intialization
+        # make the guess for x to be size of sy padded by sf
+
+    #using our intialization of f, use it to guess x given y
+        ## here I am assuming sf<sy
+        sx = sf + sy - 1
+        Y = np.zeros(sx)
+        Y[sf[0]-1:,sf[1]-1:] = y
+        x = np.multiply(np.conj(np.fft.fft2(f,s=sx)),np.fft.fft2(Y,s=sx))
+        x = setZero(np.real(np.fft.ifft2(x)))
+        ## to be clear, this is a waste of time, beacuse we know we are choosing x=y1
+        ## that is what the delta function means.
+        ## This was useful coding practice because it means the image is centered using my conventions
+        ## need to understand why this padding is really necessary
+        ## these lines may be useful for srf cases which we are ignoring rn
+        return x, f
 
 # function that converts all negative elements to zero
 def setZero(x):
-  x[x<0] = 0
-  return x
-
-# function that slices an array
-def cnv2slice(A, i, j):
-  A = A[i,j]
-  return A
-
-# function that creates a resizing matrix
-# (turns a vector of length n into a vector of length m)
-def sampmat(m, n):
-    D = np.matmul(np.kron(np.eye(m),np.ones(n)),np.kron(np.eye(n),np.ones(m)).T) / n
-    return D
-
-# function that resizes x to have the dimensions sy
-def samp2(x, sy):
-    sx = x.shape
-    y = np.matmul(np.matmul(sampmat(sy[0],sx[0]),x),sampmat(sy[1],sx[1]).T)
-    return y
-
-# function that performs 2D convolution via FFTs
-def cnv2(x,f,sy):
-
-    # get the dimensions of x and f
-    sx = np.array(x.shape)
-    sf = np.array(f.shape)
-
-    # if the x image is larger than the PSF, bump up the size of the PSF so that they match
-    if np.all(np.greater_equal(sx,sf)):
-
-        # use real FFTs to avoid returning complex values
-        y = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(f, s=[sx[0], sx[1]])))
-        # slice out the appropriate piece of the x image to make the y image
-        y = cnv2slice(y, slice(sf[0]-1, sx[0]), slice(sf[1]-1, sx[1]))
-    # if the PSF is larger than the x image, swap their roles
-    elif np.all(np.greater_equal(sf,sx)):
-        y = cnv2(f,x,sy)
-
-    # if neither is larger than the other, math has broken and you should alert the world
-    else:
-        raise Exception('[cnv2] x must be at least as large as f or vice versa.')
-
-    # check that the returned y image matches the expected dimensions
-    if np.any(np.greater(sy,y.shape)):
-        raise Exception('[cnv2] size missmatch between input and computed y.')
-
-    # if the expected y image dimensions are smaller than the computed one's, downsample it
-    if np.any(np.less(sy,y.shape)):
-        y = samp2(y,sy)
-
-    # return the computed y image
-    return y
-
-def cnv2tp(x, y, srf):
-    sx = np.array(x.shape)
-    sy = np.array(y.shape)
-    if (srf > 1):
-        samp2(y, np.floor(srf*sy))
-    if np.all(np.greater_equal(sx, sy)):
-        sf = sx - sy
-        debug1=0
-        debug2=0
-        debug3=0
-        debug4=0
-        debug5=0
-        debug6=0
-        #f = np.fft.ifft2(np.multiply(np.fft.fft2(cnv2slice(x, slice(int(sx[0]/2-sy[0]/2), int(sx[0]/2+sy[0]/2)), slice(int(sx[1]/2-sy[1]/2), int(sx[1]/2+sy[1]/2)))), np.fft.fft2(y)))
-        #print(x.shape)
-        #print(y.shape)
-        #print((np.fft.fft2(cnv2pad(y, sf))).shape)
-        #print((np.fft.fft2(x)).shape)
-        #fig, ax = plt.subplots(1,2, figsize=(24., 8.))
-        #ax[0].imshow(x, origin='lower')
-        #plt.show()
-        fft_x=np.fft.fft2(x)
-        if debug1:
-            print("fft_x:")
-            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
-            ax.imshow(abs(np.fft.fftshift(fft_x)), origin='lower')
-            plt.show()
-
-        #breakpoint()
-
-        pad_y=cnv2pad(y, sf)
-        if debug2:
-            print("pad_y:")
-            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
-            ax.imshow(pad_y, origin='lower')
-            plt.show()
-        #breakpoint()
-
-        fft_y=np.fft.fft2(pad_y)
-        if debug3:
-            print("fft_y:")
-            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
-            ax.imshow(abs(np.fft.fftshift(fft_y)), origin='lower')
-            plt.show()
-        #breakpoint()
-
-        mult1=np.multiply(fft_x, fft_y)
-        if debug4:
-            print("mult1:")
-            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
-            ax.imshow(abs(np.fft.fftshift(mult1)), origin='lower')
-            plt.show()
-        #breakpoint()
-
-        ifft_xy=np.fft.ifft2(mult1)
-        ifft_xy=np.roll(ifft_xy,172,1) #total - 1/4 psf - 172
-        ifft_xy=np.roll(ifft_xy,140,0) #total - 1/2 psf - 140
-        if debug5:
-            print("ifft_xy:")
-            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
-            ax.imshow(abs(ifft_xy), origin='lower')
-            plt.show()
-        #f = np.fft.ifft2(np.multiply(np.fft.fft2(x), np.fft.fft2(cnv2pad(y, sf))))
-        #pdb.set_trace()
-        #f = cnv2slice(np.real(f), slice(int(sy[0]/2-sf[0]/2), int(sy[0]/2+sf[0]/2)), slice(int(sy[1]/2-sf[1]/2), int(sy[1]/2+sf[1]/2)))
-            with h5py.File('main/obd/f1.hdf5', 'w') as hdf:
-                hdf.create_dataset('dataset1', data=ifft_xy)
-        #f = cnv2slice(np.real(ifft_xy), slice(0+25, sf[0]+25), slice(0+11, sf[1]+11))
-        f = cnv2slice(np.real(ifft_xy), slice(0, sf[0]), slice(0, sf[1]))
-        if debug6:
-            print("f:")
-            fig, ax = plt.subplots(1,1, figsize=(24., 8.))
-            ax.imshow(f, origin='lower')
-            plt.show()
-        #pdb.set_trace()
-    elif np.all(np.less_equal(sx, sy)):
-        sf = sy + sx
-        f = np.multiply(np.conj(np.fft.fft2(x,s=sf)), np.fft.fft2(cnv2pad(y, sx),s=sf))
-        f = np.fft.ifft2(f)
-    else:
-        raise Exception('[cnv2.m] x must be at least as large as y or vice versa.')
-    f = np.real(f)
-    return f
-
-def cnv2pad(A, sf):
-    i = sf[0]; j = sf[1]
-    sA = A.shape
-    B = np.zeros((sA[0]+i, sA[1]+j))
-    B[i:, j:] = np.real(A)
-    return B
+    x[x<0] = 0
+    return x
