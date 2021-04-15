@@ -41,7 +41,7 @@ for i in tqdm(range(0,101)):
         y = imageio.imread(fname)
         #y = y[:,:,1].astype(np.float64)   # use only first color channel
         #print('Processing {}'.format(fname))
-        x, f = ob.obd(x, y, sf, maxiter)
+        x, f, y = ob.obd(x, y, sf, maxiter)
         #fig, ax = plt.subplots(1,3, figsize=(24., 8.))
         #ax[0].imshow(y, origin='lower')
         #ax[1].imshow(f, origin='lower')
