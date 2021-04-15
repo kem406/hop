@@ -1,6 +1,6 @@
 ## imports
 import numpy as np
-import main.obd_AKS.obd as ob
+import main.obd.obd_sr as ob
 import imageio
 
 #Plotting Packages
@@ -20,6 +20,8 @@ def y_fname_nocurve(i):
     return imagepath+'NOTRANSIT_super_resolution_'+str(i)+'.tiff'
 def gt_y_fname_nocurve(i):
     return imagepath0+'NOTRANSIT_test_gt_'+str(i)+'.tiff'
+def y_fname_nocurve_preobd(i,j):
+    return imagepath0+'NOTRANSIT_test_'+str(i)+'_slice_'+str(j)+'.tiff'
 
 test = imageio.imread(gt_y_fname(1))
 #print(np.sum(test))
@@ -61,3 +63,15 @@ for i in range (1,45):
     plot0_x=np.concatenate((plot0_x, np.array([i])), axis=0)
 #print(plot_y)
 plt.scatter(plot0_x, plot_y)
+
+# PART 5: NO TRANSIT PRE-OBD NON GT PLOT
+plot0_y=np.array([np.sum(imageio.imread(y_fname_nocurve_preobd(0,1)))])
+plot0_x=np.array([0])
+for i in range (1,100):
+    j=1; # perhaps try mean of j
+    #print(np.sum(imageio.imread(gt_y_fname(i))))
+    plot0_y=np.concatenate((plot0_y, np.array([np.sum(imageio.imread(y_fname_nocurve_preobd(i,j)))])), axis=0)
+    plot0_x=np.concatenate((plot0_x, np.array([i])), axis=0)
+#print(plot0_x)
+#print(plot0_y)
+plt.scatter(plot0_x, plot0_y)
