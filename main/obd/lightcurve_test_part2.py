@@ -17,7 +17,7 @@ def y_fname(i):
 def gt_y_fname(i):
     return imagepath0+'transit_test_gt_'+str(i)+'.tiff'
 def y_fname_preobd(i,j):
-    return 'transit_mocks/data/transit_test_'+str(i)+'_slice_'+str(j)+'.tiff'
+    return 'transit_mocks/data1/transit_test_'+str(i)+'_slice_'+str(j)+'.tiff'
 def y_fname_nocurve(i):
     return imagepath+'NOTRANSIT_super_resolution_'+str(i)+'.tiff'
 def gt_y_fname_nocurve(i):
@@ -41,8 +41,10 @@ plt.scatter(plot0_x, plot0_y)
 
 # PART 2: SIMULATED DATA PLOT
 plot_y=np.array([np.sum(imageio.imread(y_fname(0)))])
+plot0_x=np.array([0])
 for i in range (1,101):
     plot_y=np.concatenate((plot_y, np.array([np.sum(imageio.imread(y_fname(i)))])), axis=0)
+    plot0_x=np.concatenate((plot0_x, np.array([i])), axis=0)
 #print(plot_y)
 plt.scatter(plot0_x, plot_y)
 
