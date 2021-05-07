@@ -14,10 +14,10 @@ def debayer(inpname):
     data = read_fits(inpname)
 
     # blue channel
-    chan_blue = data[::2,::2]
+    chan_blue = data[1::2,1::2]
 
     # red channel
-    chan_red = data[1::2,1::2]
+    chan_red = data[::2,::2]
 
     # green channel
     chan_green_temp = np.zeros((int(data.shape[0]/2),data.shape[1]))
